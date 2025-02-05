@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Player Dashboard</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body id="player-dashboard">
+    <header>
+      <h1>Welcome, <%= user.name %></h1>
+    </header>
+    <div class="container">
+      <div class="dashboard">
+        <div class="logout">
+          <a href="/login">Logout</a>
+          <a href="/change-password">Change Password</a>
+        </div>
+
+        <h2>Joined Sessions</h2>
+        <ul>
+          <% joinedSessions.forEach(session => { %>
+          <li>
+            Sport: <%= session.sport_name %>, Teams: <%= session.team1 %> vs <%=
+            session.team2 %>, Date: <%= session.date %>, Venue: <%=
+            session.venue %>
+            <br />Players:
+            <ul>
+              <% session.players.forEach(player => { %>
+              <li>
+                <%= player.name %> <% if (player.id === user.id) { %>(You)<% }
+                %>
+              </li>
+              <% }) %>
+            </ul>
+            <% if (session.cancelled) { %>
+            <div class="cancelled">
+              Cancelled: <%= session.cancellation_reason %>
+            </div>
+            <% } %>
+            <% if (session.creator_id === user.id) { %>
+            <form action="/cancel-session" method="POST">
+              <input
+                type="hidden"
+                name="session_id"
+                value="<%= session.id %>"
+              />
+              <input
+                type="text"
+                name="reason"
+                placeholder="Reason for cancellation"
+                required
+              />
+              <button type="submit">Cancel Session</button>
+            </form>
+            <% } else { %>
+            <form action="/exit-session" method="POST">
+              <input
+                type="hidden"
+                name="session_id"
+                value="<%= session.id %>"
+              />
+              <button type="submit">Exit</button>
+            </form>
+            <% } %>
+          </li>
+          <% }) %>
+        </ul>
+
+        <h2>Available Sessions</h2>
+        <ul>
+          <% sessions.forEach(session => { %>
+          <li>
+            Sport: <%= session.sport_name %>, Teams: <%= session.team1 %> vs <%=
+            session.team2 %>, Date: <%= session.date %>, Venue: <%=
+            session.venue %>
+            <br />Players:
+            <ul>
+              <% session.players.forEach(player => { %>
+              <li>
+                <%= player.name %> <% if (player.id === user.id) { %>(You)<% }
+                %>
+              </li>
+              <% }) %>
+            </ul>
+            <% if (session.creator_id !== user.id && !session.cancelled) { %>
+              <form action="/join-session" method="post">
+                <input type="hidden" name="session_id" value="<%= session.id %>">
+                <button type="submit">Join Session</button>
+              </form>
+            <% } else { %> (Created by you) <% } %> <% if (session.cancelled) {
+            %>
+            <div class="cancelled">
+              Cancelled: <%= session.cancellation_reason %>
+            </div>
+            <% } %>
+          </li>
+          <% }) %>
+        </ul>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Admin Dashboard</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f0f2f5;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      header {
+        background-color: #007bff;
+        color: white;
+        padding: 10px 0;
+        width: 100%;
+        text-align: center;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+      .container.dashboard {
+        background-color: #ffffff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        width: 80%;
+        max-width: 1200px;
+        margin-top: 20px;
+      }
+      .logout {
+        text-align: right;
+        margin-bottom: 20px;
+      }
+      .logout a {
+        margin-left: 15px;
+        color: #007bff;
+        text-decoration: none;
+      }
+      .logout a:hover {
+        text-decoration: underline;
+      }
+      .content {
+        display: flex;
+        justify-content: space-between;
+      }
+      .content div {
+        width: 45%;
+      }
+      h2 {
+        color: #333333;
+      }
+      label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: bold;
+        color: #666666;
+      }
+      input[type="text"],
+      input[type="number"],
+      input[type="datetime-local"],
+      select {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 15px;
+        border: 1px solid #cccccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+        background-color: #f9f9f9;
+        color: #333333;
+      }
+      button {
+        padding: 10px 20px;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+      }
+      button:hover {
+        background-color: #218838;
+      }
+      .cancelled {
+        color: red;
+        font-weight: bold;
+      }
+      .report-link {
+        display: block;
+        text-align: center;
+        margin-top: 20px;
+        color: #007bff;
+        text-decoration: none;
+      }
+      .report-link:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body id="admin-dashboard">
+    <header>
+      <h1>Welcome, <%= user.name %></h1>
+    </header>
+    <div class="container dashboard">
+      <div class="logout">
+        <a href="/login">Logout</a>
+        <a href="/change-password">Change Password</a>
+      </div>
+      <section class="content">
+        <div>
+          <!-- <h2>Sports</h2>
+          <ul id="sports-list"></ul> -->
+          <h2>Create Sport</h2>
+          <form action="/create-sport" method="POST">
+            <label for="name">Sport Name:</label>
+            <input type="text" name="name" id="name" required />
+            <button type="submit">Create Sport</button>
+          </form>
+        </div>
+        <div>
+          <h2>All Sessions</h2>
+          <ul>
+            <% sessions.forEach(session => { %>
+            <li>
+              Sport: <%= session.sport_name %>, Teams: <%= session.team1 %> vs
+              <%= session.team2 %>, Date: <%= session.date %>, Venue: <%= session.venue %>
+              <br />Created by: <%= session.creator_name %> <br />Players:
+              <ul>
+                <% session.players.forEach(player => { %>
+                <li><%= player.name %></li>
+                <% }) %>
+              </ul>
+              <% if (session.cancelled) { %>
+              <div class="cancelled">
+                Cancelled: <%= session.cancellation_reason %>
+              </div>
+              <% } %>
+              <form action="/delete-session" method="POST" style="display: inline;">
+                <input type="hidden" name="session_id" value="<%= session.id %>" />
+                <button type="submit">Delete</button>
+              </form>
+              <!-- <form action="/join-session" method="POST" style="display: inline;">
+                <input type="hidden" name="session_id" value="<%= session.id %>" />
+                <button type="submit">Join</button>
+              </form> -->
+              <form action="/edit-session" method="GET" style="display: inline;">
+                <input type="hidden" name="session_id" value="<%= session.id %>" />
+                <button type="submit">Edit</button>
+              </form>
+            </li>
+            <% }) %>
+          </ul>
+        </div>
+      </section>
+
+      <h2>Create Session</h2>
+      <form action="/create-session" method="POST">
+        <label for="sport_id">Sport:</label>
+        <select name="sport_id" id="sport_id" required>
+          <% sports.forEach(sport => { %>
+          <option value="<%= sport.id %>"><%= sport.name %></option>
+          <% }) %>
+        </select>
+        <label for="team1">Team 1:</label>
+        <input type="text" name="team1" id="team1" required />
+        <label for="team2">Team 2:</label>
+        <input type="text" name="team2" id="team2" required />
+        <label for="additional_players">Additional Players:</label>
+        <input type="number" name="additional_players" id="additional_players" required />
+        <label for="date">Date:</label>
+        <input type="datetime-local" name="date" id="date" required />
+        <label for="venue">Venue:</label>
+        <input type="text" name="venue" id="venue" required />
+        <button type="submit">Create Session</button>
+      </form>
+
+      <a href="/reports" class="report-link">View Reports</a>
+    </div>
+
+    
+  </body>
+</html>
